@@ -2,8 +2,8 @@ from flask.globals import session
 from config import create_app, create_mqtt
 from models import init_app, db
 import models
-from flask import jsonify, request
 import json
+from flask import Flask,render_template,request,redirect, jsonify, request
 app = create_app()
 init_app(app)
 
@@ -20,14 +20,24 @@ mqtt_client.subscribe("flask-mqtt", 0)
 
 @app.route('/')
 def hello_world():
-    return 'Hello, World!'
+    all_data = models.ExampleData.query.all()
+    return render_template('index.html', title='Home', all_data=all_data)
 
-@app.route('/example/all', methods=['GET'])
+@app.route('/submit', methods=['POST'])
+def handle_data():
+    # temperature = request.form['temperature']
+    entity = models.ExampleData(**request.form)
+    db.session.add(entity)
+    db.session.commit()
+    return redirect("/")
+
+
+@app.route('/api/example/all', methods=['GET'])
 def get_all_data():
     all_data = models.ExampleData.query.all()
     return jsonify(models.ExampleData.serialize_list(all_data))
 
-@app.route('/example', methods=['POST'])
+@app.route('/api/example', methods=['POST'])
 def post_data():
     content = request.json
     entity = models.ExampleData(**content)

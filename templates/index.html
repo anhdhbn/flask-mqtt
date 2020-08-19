@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Flask-mqtt server</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/index.css')}}">
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <div id="container">
+        <div id=data>
+            <h3>Data</h3>
+            {% for post in all_data %}
+            <div><p>Id: <b>{{ post.id }}</b>, Temperature: <b>{{ post.temperature }}</b></p></div>
+            {% endfor %}
+        </div>
+        <div>
+            <h3>Form data</h3>
+            <form action="{{ url_for('handle_data') }}" method="post">
+                <label for="temperature">Temperature:</label><br>
+                <input type="text" id="temperature" name="temperature">
+                <input type="submit">
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
